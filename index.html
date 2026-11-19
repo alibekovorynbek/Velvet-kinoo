@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VELVET / KINO — Репертуарный кинотеатр · Афиша 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__meta">
+      <span>ЗАЛ №1 · 35MM &amp; 4K LASER</span>
+      <span class="dot">•</span>
+      <span>АТЫРАУ, САТПАЕВА 19</span>
+    </div>
+    <a href="#" class="brand" id="navHomeBtn">
+      <span class="brand__serif">VELVET</span>
+      <span class="brand__slash">/</span>
+      <span class="brand__mono">KINO</span>
+    </a>
+    <nav class="topbar__nav">
+      <button class="nav-link active" data-view="schedule">АФИША 2026</button>
+      <button class="nav-link" data-view="tickets">
+        МОИ БИЛЕТЫ <span class="badge" id="ticketsCountBadge">0</span>
+      </button>
+      <button class="nav-btn" id="authTriggerBtn">ВОЙТИ</button>
+    </nav>
+  </header>
+
+  <section class="daybar" id="daybarSection">
+    <div class="daybar__label">РАСПИСАНИЕ КАССЫ:</div>
+    <div class="daybar__tabs" id="dayTabs"></div>
+    <div class="daybar__promo">ПРОМОКОД НА СКИДКУ 15%: <strong>VELVET26</strong></div>
+  </section>
+
+  <main id="viewSchedule" class="main-wrap">
+    <section class="boxoffice-grid">
+      <article class="featured-card" id="featuredFilmCard"></article>
+
+      <aside class="timetable-panel">
+        <div class="panel-head">
+          <h2>СВОДНОЕ ТАБЛО СЕАНСОВ</h2>
+          <span class="mono-muted" id="selectedDayTitle">14 НОЯБРЯ, СБ</span>
+        </div>
+        <div class="timetable-list" id="timetableList"></div>
+      </aside>
+    </section>
+
+    <section class="repertory-section">
+      <div class="repertory-head">
+        <div>
+          <span class="kicker">РЕПЕРТУАРНЫЙ КАТАЛОГ</span>
+          <h2>ПРЕМЬЕРЫ СЕЗОНА 2026</h2>
+        </div>
+        <div class="repertory-controls">
+          <div class="genre-filters" id="genreFilters"></div>
+          <input type="search" id="searchInput" class="search-input" placeholder="Поиск по названию или режиссёру..." />
+        </div>
+      </div>
+      <div class="films-grid" id="filmsGrid"></div>
+    </section>
+  </main>
+
+  <section id="viewTickets" class="main-wrap hidden">
+    <div class="tickets-header">
+      <div>
+        <span class="kicker">ЛИЧНЫЙ АРХИВ КОНТРОЛЬНЫХ КУПОНОВ</span>
+        <h2>ВАШИ ЭЛЕКТРОННЫЕ БИЛЕТЫ</h2>
+      </div>
+      <button class="btn-outline" id="backToScheduleBtn">← ВЕРНУТЬСЯ К АФИШЕ</button>
+    </div>
+    <div id="ticketsContainer" class="tickets-list"></div>
+  </section>
+
+  <div class="modal-backdrop hidden" id="bookingModal">
+    <div class="modal-window modal-window--wide">
+      <div class="modal-head">
+        <div class="modal-head__info">
+          <span class="kicker" id="modalSessionMeta">ЗАЛ 1 · IMAX 2D</span>
+          <h3 id="modalFilmTitle">Название фильма</h3>
+        </div>
+        <div class="modal-head__right">
+          <div class="timer-box" title="Время удержания мест">
+            БРОНЬ: <span id="bookingTimer">14:59</span>
+          </div>
+          <button class="close-btn" id="closeBookingModal" aria-label="Закрыть">✕</button>
+        </div>
+      </div>
+
+      <div class="session-switcher" id="modalTimeSwitcher"></div>
+
+      <div class="booking-body">
+        <div class="hall-area">
+          <div class="screen-arc">
+            <div class="screen-line"></div>
+            <span>ЭКРАН · DOLBY ATMOS &amp; 35MM</span>
+          </div>
+
+          <div class="seats-grid" id="seatsGrid"></div>
+
+          <div class="seat-legend">
+            <span><i class="swatch swatch--std"></i> Standard · 2 200 ₸</span>
+            <span><i class="swatch swatch--comf"></i> Comfort · 3 000 ₸</span>
+            <span><i class="swatch swatch--vip"></i> Velvet LoveSeat (парный) · 4 500 ₸</span>
+            <span><i class="swatch swatch--busy"></i> Занято</span>
+          </div>
+          <div class="seat-hover-hint" id="seatHoverHint">Наведите на кресло, чтобы увидеть ряд, место и тариф</div>
+        </div>
+
+        <div class="checkout-area">
+          <div class="paper-ticket-box">
+            <div class="paper-head">
+              <span>КОНТРОЛЬНЫЙ ЧЕК</span>
+              <span id="checkoutDateBadge">14 НОЯ · 19:30</span>
+            </div>
+
+            <div class="selected-seats-list" id="selectedSeatsList">
+              <p class="empty-note">Выберите от 1 до 6 мест на схеме зала слева.</p>
+            </div>
+
+            <div class="promo-row">
+              <input type="text" id="promoInput" placeholder="Промокод (VELVET26)" />
+              <button type="button" id="applyPromoBtn">ОК</button>
+            </div>
+            <div class="promo-status" id="promoStatus"></div>
+
+            <div class="checkout-user-box" id="checkoutUserBox"></div>
+
+            <div class="pay-methods">
+              <label class="pay-option">
+                <input type="radio" name="payMethod" value="Kaspi QR" checked />
+                <span>Kaspi QR / Gold</span>
+              </label>
+              <label class="pay-option">
+                <input type="radio" name="payMethod" value="Банковская карта" />
+                <span>Карта Visa / MC</span>
+              </label>
+            </div>
+
+            <div class="total-row">
+              <span>ИТОГО К ОПЛАТЕ:</span>
+              <strong id="totalPriceLabel">0 ₸</strong>
+            </div>
+
+            <button class="btn-velvet btn-full" id="confirmPurchaseBtn" disabled>
+              ОФОРМИТЬ И ПОЛУЧИТЬ БИЛЕТ
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="authModal">
+    <div class="modal-window modal-window--narrow">
+      <div class="modal-head">
+        <div>
+          <span class="kicker">КЛУБНАЯ КАРТА ЗРИТЕЛЯ</span>
+          <h3 id="authModalTitle">ВХОД В КАБИНЕТ</h3>
+        </div>
+        <button class="close-btn" id="closeAuthModal">✕</button>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-authmode="login">ВХОД</button>
+        <button class="auth-tab" data-authmode="register">РЕГИСТРАЦИЯ</button>
+      </div>
+
+      <form id="authForm" class="auth-form">
+        <div class="form-group hidden" id="authNameGroup">
+          <label>Имя и фамилия</label>
+          <input type="text" id="authNameInput" placeholder="Например: Алихан Сериков" />
+        </div>
+        <div class="form-group">
+          <label>Электронная почта</label>
+          <input type="email" id="authEmailInput" required placeholder="viewer@velvetkino.kz" />
+        </div>
+        <div class="form-group">
+          <label>Пароль</label>
+          <input type="password" id="authPassInput" required placeholder="Минимум 4 символа" />
+        </div>
+        <div class="form-error" id="authErrorMsg"></div>
+        <button type="submit" class="btn-velvet btn-full" id="authSubmitBtn">ВОЙТИ</button>
+        <button type="button" class="btn-outline btn-full" id="demoLoginBtn">
+          БЫСТРЫЙ ДЕМО-ВХОД В 1 КЛИК
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <span>VELVET / KINO · РЕПЕРТУАРНЫЙ КИНОТЕАТР</span>
+    <span>ВСЕ СЕАНСЫ 2026 · БРОНЬ И ВОЗВРАТ ОНЛАЙН</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
